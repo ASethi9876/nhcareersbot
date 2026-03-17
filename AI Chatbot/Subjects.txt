@@ -1,0 +1,31 @@
+# Subjects
+
+## Science Roles
+Data Analyst
+Data Scientist
+Environmental Practitioner
+Business Analyst
+Civil Engineering
+
+## Technology
+Data Scientist
+Digital Product Management
+Business Analyst
+IT Solutions Technician
+
+## Engineering
+Civil Engineering
+Quantity Surveying
+Project Management
+
+## Arts
+Human Resources
+Customer Service Specialist
+Business Admin
+
+## Mathematics
+Business Analyst
+Civil Engineering
+Quantity Surveying
+Procurement
+Project Management

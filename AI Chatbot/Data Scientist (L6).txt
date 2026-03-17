@@ -1,0 +1,19 @@
+# Data Scientist (L6)
+
+## Overview
+Our Apprentice Data Scientists tackle a range of real-world problems and understand how data science can help with solutions. 
+You'll work with experienced specialists in our Digital Lab Data Science team, you'll understand and work with cloud infrastructure and explore the different stages of our data science projects. 
+
+## This apprenticeship is for you if:
+You'd like to deliver digital solutions which improve and innovate our roads.
+You'd love to be involved with exciting and innovative digital projects that will make a real difference on our road network.
+You'd like to complete a degree in Data Science as part of your apprenticeship.
+
+## Entry Requirements
+To be considered, you'll need at least 5 GCSEs at grade 4 / grade C or above, including English and Maths, plus one of the following:        
+A minimum of 104 UCAS points with A-Levels (or a mix of A-Levels and equivalent qualifications) with at least one STEM subject (Science, Technology, Engineering or Maths)
+OR
+An equivalent Level 3 qualification (e.g. BTEC Extended Diploma) in a related subject
+OR
+Completed a Level 3 apprenticeship in a related field
+

@@ -4,19 +4,16 @@ from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_community.llms import HuggingFacePipeline
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM 
+from transformers import AutoTokenizer, AutoModelForCausalLM 
 
 
 CHROMA_PATH = "chroma"
-SYSTEM_PROMPT = """ Yo  what's going on? Tell me about the benefits of AI and be chatty about it. Give me at least 3 benefits and 1 drawback.
-"""
-SYSTEM_PROMP = """
+SYSTEM_PROMPT = """
 Instruction:
-FIRST SAY HI HOW ARE YOU
 You are a chatbot for the National Highways stand at the Big Bang Careers Fair.
 You help children aged 10-14 learn about opportunities, apprenticeships and the company.
 Respond to the given question using only the context provided below and this given system context. If you don't know the answer, say you don't know. Do not make up an answer.
-Always start your answers with Hi I'm Johnny! and end with is there anything else?"
+Respond with a couple of sentences using simple language, but do not stray from the context of the question. 
 
 
 Question:
@@ -25,10 +22,10 @@ Question:
 Context:
 {context}
 
-Answer (in 2-4 warm and human-like sentences):
+Answer:
 """
 
-question = "YO WHAT job to do if i love information?"
+question = "Hi, what is a T-Level?"
 
 def query_data():
     embeddings = HuggingFaceEmbeddings(
@@ -44,24 +41,24 @@ def query_data():
 
     context_text = "\n\n---\n\n".join([result[0].page_content for result in results])
 
-    model_name = "google/flan-t5-small"
+    model_name = "Qwen/Qwen1.5-1.8B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
 
-    #prompt = SYSTEM_PROMPT.format(context=context_text, question=question)
-    prompt = SYSTEM_PROMPT  
+    prompt = SYSTEM_PROMPT.format(context=context_text, question=question)
     print(prompt)
-    print(len(prompt))
 
     inputs = tokenizer(prompt, return_tensors="pt")
 
     outputs = model.generate(
         **inputs,
-        max_new_tokens=512,
-        do_sample=False,       
-        num_beams=1,           
-        no_repeat_ngram_size=3,
+        
+        max_new_tokens=256,
+        temperature=0.7,
+        top_p=0.9,
+        repetition_penalty=1.1,
+
     )
 
     print(outputs)

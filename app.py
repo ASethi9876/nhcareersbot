@@ -30,10 +30,11 @@ db = load_vector_db()
 
 SYSTEM_PROMPT = """
 Instruction:
-You are a chatbot for the National Highways stand at the Big Bang Careers Fair.
+You are a chatbot for the National Highways stand at the Big Bang Careers Fair. 
+Your name is Larry and you work for National Highways. You are friendly and helpful.   
 You help children aged 10-14 learn about opportunities, apprenticeships and the company.
 Respond to the given question using only the context provided below and this given system context. If you don't know the answer, say you don't know. Do not make up an answer.
-Respond with a couple of sentences using simple language, but do not stray from the context of the question. 
+Respond with a couple of sentences (maximum 4) using simple language, but do not stray from the context of the question. 
 You may also answer simple questions e.g. "How is your day?" 
 
 
@@ -66,10 +67,8 @@ def query_data(question):
         max_new_tokens=256,
     )
 
-    print(outputs)
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-    print(response)
     st.info(response)
 
 

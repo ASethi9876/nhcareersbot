@@ -8,6 +8,26 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import streamlit as st
 
 CHROMA_PATH = "chroma"
+
+@st.cache_resource
+def load_model():
+    model_name = "Qwen/Qwen1.5-1.8B"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
+    return tokenizer, model
+
+
+def load_vector_db():
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"}
+    )
+    return Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+
+tokenizer, model = load_model()
+db = load_vector_db()
+
+
 SYSTEM_PROMPT = """
 Instruction:
 You are a chatbot for the National Highways stand at the Big Bang Careers Fair.
@@ -27,11 +47,6 @@ Answer:
 
 
 def query_data(question):
-    embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"}  
-        )
-    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
     results = db.similarity_search_with_score(question, k=2)
 
     if len(results) == 0 or results[0][1] < 0.5:
@@ -40,24 +55,14 @@ def query_data(question):
 
     context_text = "\n\n---\n\n".join([result[0].page_content for result in results])
 
-    model_name = "Qwen/Qwen1.5-1.8B"
-
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name)
 
     prompt = SYSTEM_PROMPT.format(context=context_text, question=question)
-    print(prompt)
-
+    
     inputs = tokenizer(prompt, return_tensors="pt")
 
     outputs = model.generate(
         **inputs,
-        
         max_new_tokens=256,
-        temperature=0.7,
-        top_p=0.9,
-        repetition_penalty=1.1,
-
     )
 
     print(outputs)
@@ -65,13 +70,9 @@ def query_data(question):
 
     print(response)
     st.info(response)
-    return
 
-def parse_input():
-    pass 
 
 st.title("Big Bang Careers Fair")
-
 
 with st.form("my_form"):
     text = st.text_area(
@@ -80,4 +81,5 @@ with st.form("my_form"):
     )
     submitted = st.form_submit_button("Submit")
     if submitted:
+        st.info("Loading...")
         query_data(text)

@@ -11,7 +11,7 @@ CHROMA_PATH = "chroma"
 
 @st.cache_resource
 def load_model():
-    model_name = "Qwen/Qwen1.5-1.8B"
+    model_name = "Qwen/Qwen1.5-0.5B"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
     return tokenizer, model
@@ -34,6 +34,7 @@ You are a chatbot for the National Highways stand at the Big Bang Careers Fair.
 You help children aged 10-14 learn about opportunities, apprenticeships and the company.
 Respond to the given question using only the context provided below and this given system context. If you don't know the answer, say you don't know. Do not make up an answer.
 Respond with a couple of sentences using simple language, but do not stray from the context of the question. 
+You may also answer simple questions e.g. "How is your day?" 
 
 
 Question:
@@ -77,7 +78,7 @@ st.title("Big Bang Careers Fair")
 with st.form("my_form"):
     text = st.text_area(
         "Enter text:",
-        "Hi, what is a T-Level?",
+        "Enter your query here...",
     )
     submitted = st.form_submit_button("Submit")
     if submitted:

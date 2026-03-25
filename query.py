@@ -5,7 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_community.llms import HuggingFacePipeline
 from transformers import AutoTokenizer, AutoModelForCausalLM 
-
+import streamlit as st
 
 CHROMA_PATH = "chroma"
 SYSTEM_PROMPT = """
@@ -25,9 +25,8 @@ Context:
 Answer:
 """
 
-question = "Hi, what is a T-Level?"
 
-def query_data():
+def query_data(question):
     embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"}  
@@ -70,5 +69,16 @@ def query_data():
 def parse_input():
     pass 
 
+st.title("Big Bang Careers Fair")
 
-query_data()
+
+with st.form("my_form"):
+    text = st.text_area(
+        "Enter text:",
+        "Hi, what is a T-Level?",
+    )
+    submitted = st.form_submit_button("Submit")
+    if not openai_api_key.startswith("sk-"):
+        st.warning("Please enter your OpenAI API key!", icon="⚠")
+    if submitted and openai_api_key.startswith("sk-"):
+        query_data(text)

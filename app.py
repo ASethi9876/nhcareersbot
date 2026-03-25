@@ -64,6 +64,7 @@ def query_data(question):
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     print(response)
+    st.info(response)
     return
 
 def parse_input():

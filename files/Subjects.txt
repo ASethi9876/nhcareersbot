@@ -7,23 +7,23 @@ Environmental Practitioner
 Business Analyst
 Civil Engineering
 
-## Technology
+## Technology Roles
 Data Scientist
 Digital Product Management
 Business Analyst
 IT Solutions Technician
 
-## Engineering
+## Engineering Roles
 Civil Engineering
 Quantity Surveying
 Project Management
 
-## Arts
+## Arts Roles
 Human Resources
 Customer Service Specialist
 Business Admin
 
-## Mathematics
+## Mathematics Roles
 Business Analyst
 Civil Engineering
 Quantity Surveying

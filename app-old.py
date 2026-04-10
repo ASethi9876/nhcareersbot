@@ -1,13 +1,20 @@
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_community.llms import HuggingFacePipeline
 from transformers import AutoTokenizer, AutoModelForCausalLM 
-import gradio as gr
-from toxicity import is_inappropriate
+import streamlit as st
 
 CHROMA_PATH = "chroma"
+
+@st.cache_resource
+def load_model():
+    model_name = "Qwen/Qwen1.5-0.5B"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
+    return tokenizer, model
 
 
 def load_vector_db():
@@ -17,7 +24,7 @@ def load_vector_db():
     )
     return Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
 
-
+tokenizer, model = load_model()
 db = load_vector_db()
 
 if "last_response" not in st.session_state:
@@ -60,51 +67,34 @@ def query_data(question):
 
     prompt = SYSTEM_PROMPT.format(context=context_text, question=question)
     
+    inputs = tokenizer(prompt, return_tensors="pt", add_generation_prompt=True)
+
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=256,
+    )
 
     response = tokenizer.decode(outputs[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
 
     display.info(response)
     st.session_state.last_response = response
 
-    
-from llm import generate
 
-def query_data(question):
-    if is_inappropriate(question):
-        return "I can’t help with that question. Please ask another question about National Highways or careers!"
+st.title("Big Bang Careers Fair")
+st.subheader("Ask the chatbot about National Highways and the opportunities available!")
 
-    results = db.similarity_search_with_score(question, k=3)
+with st.form("my_form"):
+    text = st.text_input("Enter text:", "Enter your query here...")
+    submitted = st.form_submit_button("Submit")
+    display = st.empty()
 
-    if not results or results[0][1] < 0.7:
-        return "I’m not sure about that. Please ask another question about National Highways or careers!"
+    st.markdown("""
+    Information provided may not be 100% accurate.  \nFor more information, visit https://nationalhighways.co.uk/careers.
+    """)   
 
-    context_text = "\n\n---\n\n".join(
-        [doc.page_content for doc, _ in results]
-    )
-
-    prompt = SYSTEM_PROMPT.format(
-        question=question,
-        context=context_text
-    )
-
-    response = generate(prompt)
-    response = ". ".join(response.split(". ")[:4])
-
-    if is_inappropriate(response):
-        return "I can’t help with that question. Please ask another question about National Highways or careers!"
-
-    return response
-``
-
-
-def chat_fn(message, history):
-    return query_data(message)
-
-demo = gr.ChatInterface(
-    fn=chat_fn,
-    title="Big Bang Careers Fair Chatbot",
-    description="Ask me about National Highways, careers, and job opportunities!",
-)
-
-demo.launch()
+    if submitted:
+        with display:
+            st.info("Loading...")
+        st.info(st.session_state.last_response)
+        query_data(text)
 
